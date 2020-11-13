@@ -1,6 +1,7 @@
 package repl
 
 import (
+	"OSPLang/evaluator"
 	"OSPLang/lexer"
 	"OSPLang/parser"
 	"bufio"
@@ -10,6 +11,7 @@ import (
 
 const PROMPT = "#>"
 
+//Start ...
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 
@@ -30,9 +32,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
-
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, program.String())
+			io.WriteString(out, "\n")
+		}
 	}
 
 }
