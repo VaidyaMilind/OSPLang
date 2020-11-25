@@ -1,7 +1,10 @@
 package object
 
 import (
+	"OSPLang/ast"
+	"bytes"
 	"fmt"
+	"strings"
 )
 
 //ObjectType of object
@@ -19,6 +22,7 @@ const (
 	NULL_OBJ         = "NULL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
+	FUNCTION_OBJ     = "FUNCTION"
 )
 
 //Integer struct with Value int64
@@ -73,3 +77,53 @@ func (e *Error) Type() ObjectType { return ERROR_OBJ }
 
 //Inspect is of Error
 func (e *Error) Inspect() string { return "ERROR: " + e.Message }
+
+/*
+//NewEnvironment is ...
+func NewEnvironment() *Environment {
+	s := make(map[string]Object)
+	return &Environment{store: s}
+}
+
+//Environment struct
+type Environment struct {
+	store map[string]Object
+}
+
+//Get for Environment
+func (e *Environment) Get(name string) (Object, bool) {
+	obj, ok := e.store[name]
+	return obj, ok
+}
+
+//Set for Environment
+func (e *Environment) Set(name string, val Object) Object {
+	e.store[name] = val
+	return val
+}
+
+*/
+
+type Function struct {
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Environment
+}
+
+func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
+func (f *Function) Inspect() string {
+
+	var out bytes.Buffer
+	params := []string{}
+	for _, p := range f.Parameters {
+		params = append(params, p.String())
+	}
+
+	out.WriteString("fn")
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ","))
+	out.WriteString(") { \n")
+	out.WriteString(f.Body.String())
+	out.WriteString("\n}")
+	return out.String()
+}
